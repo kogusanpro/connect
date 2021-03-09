@@ -1,6 +1,6 @@
 import scrapy
 import re
-from analytics_board_scrapy.items import AnalyticsBoardScrapyItem
+from analytics_board_scrapy.items import AnalyticsBoardScrapyItem as ABI
 import requests
 from bs4 import BeautifulSoup
 
@@ -12,20 +12,20 @@ class ScrapyBlogSpiderSpider(scrapy.Spider):
 
     def parse(self, response):
         for quote in response.css('article.post-list'):
-            scrapy_items = AnalyticsBoardScrapyItem()
-            scrapy_items['url'] = []
-            scrapy_items['text'] = []
-            scrapy_items['keyword_counts'] = []
-            scrapy_items['url'].append(quote.css('a::attr("href")').extract_first().strip())
-            scrapy_items['text'].append(quote.xpath('a/section/h1/text()').extract_first().strip())
             # 特定キーワードの抽出
-            resp = requests.get(url=scrapy_items['url'][0])
+            url=quote.css('a::attr("href")').extract_first().strip()
+            resp = requests.get(url=url)
             html = resp.content
             soup = BeautifulSoup(html, "lxml")
             all_text=soup.find(class_="entry-content cf").text
-            scrapy_items['keyword_counts'].append(all_text.count('プログラミング'))
 
-            yield scrapy_items
+            yield ABI(
+                url=quote.css('a::attr("href")').extract_first().strip(),
+                title=quote.xpath('a/section/h1/text()').extract_first().strip(),
+                keyword_counts=all_text.count('プログラミング')
+                image_counts=
+
+            )
 
         next_page = response.css('li a.next::attr("href")').extract_first()
         if next_page is not None:

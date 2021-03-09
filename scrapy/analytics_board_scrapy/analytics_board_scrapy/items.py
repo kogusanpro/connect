@@ -8,5 +8,5 @@ import scrapy
 
 class AnalyticsBoardScrapyItem(scrapy.Item):
     url = scrapy.Field()
-    text = scrapy.Field()
+    title = scrapy.Field()
     keyword_counts = scrapy.Field()
