@@ -27,9 +27,9 @@ def get_link():
     soup = BeautifulSoup(html, "lxml")
 
     # 画像数
-    # all_img=soup.find_all('img')
-    # for img in all_img:
-    #         print(img['src'])
+    all_img=soup.find_all('img')
+    for img in all_img:
+            print(img['src'])
 
     # 内部リンク数
     # link_list=[]
@@ -42,7 +42,7 @@ def get_link():
     # アフィリエイトリンク数
     link_list=[]
     all_text=soup.find_all(class_="adsbygoogle")
-    all_link=soup.find_all('iframe', src=re.compile('^https://www.googleadservices.com/pagead/'))
+    # all_link=soup.find_all('iframe', src=re.compile('^https://www.googleadservices.com/pagead/'))
     for link in all_link:
         link_list.append(link)
     return link_list

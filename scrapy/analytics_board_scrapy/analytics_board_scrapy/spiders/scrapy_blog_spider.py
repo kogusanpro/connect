@@ -17,14 +17,32 @@ class ScrapyBlogSpiderSpider(scrapy.Spider):
             resp = requests.get(url=url)
             html = resp.content
             soup = BeautifulSoup(html, "lxml")
-            all_text=soup.find(class_="entry-content cf").text
-
+            # キーワード数
+            all_text=soup.find(class_="entry-content cf")
+            # 画像数
+            img_src = []
+            all_img=all_text.find_all('img')
+            for img in all_img:
+                img_src.append(img['src'])
+            # 内部リンク数
+            internal_link_list=[]
+            all_internal_link=all_text.find_all('a', href=re.compile('^https://su-gi-rx.com/archives/'))
+            for link in all_internal_link:
+                internal_link_list.append(link.get('href'))
+            link_set = set(internal_link_list)
+            # アフィリエイトリンク数
+            afi_link_list=[]
+            all_afi_link=soup.find_all(class_="adsbygoogle")
+            # all_link=soup.find_all('iframe', src=re.compile('^https://www.googleadservices.com/pagead/'))
+            for link in all_afi_link:
+                afi_link_list.append(link)
             yield ABI(
                 url=quote.css('a::attr("href")').extract_first().strip(),
                 title=quote.xpath('a/section/h1/text()').extract_first().strip(),
-                keyword_counts=all_text.count('プログラミング')
-                image_counts=
-
+                keyword_counts=all_text.text.count('プログラミング'),
+                image_counts=len(img_src),
+                internal_links=len(link_set),
+                afi_links=len(afi_link_list)
             )
 
         next_page = response.css('li a.next::attr("href")').extract_first()
